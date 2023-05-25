@@ -1,0 +1,75 @@
+//modules
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+//css
+//import './App.css';
+
+//components
+import RootLayout from './components/RootLayout';
+import PandenRootLayout from './components/PandenRootLayout';
+
+//pages
+import HomePage from './pages/HomePage';
+import ErrorPage from './pages/ErrorPage';
+import PagePanden from './pages/PagePanden';
+import PagePandDetail from './pages/PagePandDetail';
+import PagePandEdit from './pages/PagePandEdit';
+import PagePandCreate from './pages/PagePandCreate';
+import PageFavorieten from './pages/PageFavorieten';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />
+      },
+      {
+        path: 'panden',
+        element: <PandenRootLayout />,
+        children: [
+          {
+            index: true,
+            element: <PagePanden />,
+          },
+          {
+            path: ':id',
+            id: 'panden-detail',
+            children: [
+              {
+                index: true,
+                element: <PagePandDetail />,
+              },
+              {
+                path: 'edit',
+                element: <PagePandEdit />,
+              },
+            ],
+          },
+          {
+            path: 'new',
+            element: <PagePandCreate />,
+          },
+        ],
+      },
+      {
+        path: 'favorites',
+        element: <PageFavorieten/>,
+        errorElement: <ErrorPage/>
+      },
+      {
+        path: '*',
+        element: <ErrorPage />,
+      },
+    ]
+  }
+]);
+
+const App = props => {
+  return <RouterProvider router={router} />;
+};
+
+export default App;

@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      =  env("DATABASE_URL")
+}
+
+model Gebruiker {
+  id                  Int       @id @default(autoincrement())
+  voorNaam            String
+  achterNaam          String
+  email               String    @unique
+  wachtwoord          String
+  updatedAt           DateTime  @default(now())
+}
+
+model TypePand {
+  id                  Int       @id @default(autoincrement())
+  naam                String    @unique
+  updatedAt           DateTime  @default(now())
+
+  pand                Pand      @relation(fields: [pandId], references: [id])
+  pandId              Int       @unique
+}
+
+model Regio {
+  id                  Int       @id @default(autoincrement())
+  naam                String    @unique
+  updatedAt           DateTime  @default(now())
+  pandRegio           PandRegio?
+}
+
+model PandRegio {
+  id                  Int       @id @default(autoincrement())
+
+  regio               Regio     @relation(fields: [regioId], references: [id])
+  regioId             Int       @unique
+  pand                Pand      @relation(fields: [pandId], references: [id])
+  pandId              Int       @unique
+}
+
+model Pand {
+  id                  Int       @id @default(autoincrement())
+  straat              String
+  huisNr              Int
+  bus                 String?
+  postCode            Int
+  gemeente            String
+  aantalKamers        Int
+  oppervlakte         Float
+  beschrijving        String
+  updatedAt           DateTime  @default(now())
+  isVerkochtVerhuurd  Boolean
+
+  typePand            TypePand?
+  pandRegio           PandRegio?
+}
