@@ -29,7 +29,6 @@ const router = createBrowserRouter([
       },
       {
         path: 'panden',
-        element: <PandenRootLayout />,
         children: [
           {
             index: true,
@@ -56,7 +55,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'favorites',
+        path: 'favorieten',
         element: <PageFavorieten/>,
         errorElement: <ErrorPage/>
       },

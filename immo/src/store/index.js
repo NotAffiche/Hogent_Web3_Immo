@@ -1,9 +1,9 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import {reducer as favoritesReducer} from "./slice";
+import {reducer as favorietenReducer} from "./slice";
 import { loadState,saveState } from "./localstorage";
 import { throttle } from 'lodash';
 
-const rootReducer = combineReducers({favorites:favoritesReducer});
+const rootReducer = combineReducers({favorieten:favorietenReducer});
 
 const loadedState = loadState();
 

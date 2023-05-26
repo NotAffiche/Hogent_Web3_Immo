@@ -4,7 +4,9 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+
+const typepandRouter = require('./routes/typepand');
+const gebruikerRouter = require('./routes/gebruiker');
 
 const app = express();
 
@@ -15,12 +17,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-    console.log(`Er is een request gebeurd naar ${req.url} met ip: ${req.ip}`);
+    console.log(`Req to: ${req.url} w/ip: ${req.ip}`);
     next();
 });
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/typepanden', typepandRouter);
+app.use('/gebruikers', gebruikerRouter);
 
 app.all("*", (req, res) => {
     res.status(404).send("Page not found");

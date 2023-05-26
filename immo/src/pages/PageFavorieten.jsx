@@ -4,24 +4,18 @@ import { remove } from '../store/slice';
 
 const PageFavorieten = () => {
     const dispatch = useDispatch();
-    const favState = useSelector((state) => state.favorietePanden);
+    // const state = useSelector(state => state);
+    const favoritesState = useSelector((storeState) => storeState.favoritesState);
     return (
-        <div>
-            {
-            favState.map(f => 
-            <div key={f.id}>
+      <div>
+        {favoritesState.map(f => 
+          <div key={f.id}>
             <p>{f.name}</p>
-            <button onClick={
-                () => {
-                dispatch(remove(f.id));
-                localStorage.setItem('isLiked_'+f.id,false)
-                }
-            }>Verwijderen</button>
-            </div>  
-            )
-            }
-        </div>
+            <button onClick={() => {dispatch(remove(f.id));localStorage.setItem('isLiked_'+f.id,false)}}>Verwijderen</button>
+          </div>  
+        )}
+      </div>
     );
-};
+  };
 
 export default PageFavorieten;
