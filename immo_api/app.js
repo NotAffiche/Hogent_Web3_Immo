@@ -5,8 +5,12 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 
+const pandenRouter = require('./routes/panden');
 const typepandRouter = require('./routes/typepand');
 const gebruikerRouter = require('./routes/gebruiker');
+const afbeeldingRouter = require('./routes/afbeelding');
+const regioRouter = require('./routes/regio');
+const pandregioRouter = require('./routes/pandregio');
 
 const app = express();
 
@@ -22,8 +26,12 @@ app.use((req, res, next) => {
 });
 
 app.use('/', indexRouter);
+app.use('/panden', pandenRouter);
 app.use('/typepanden', typepandRouter);
 app.use('/gebruikers', gebruikerRouter);
+app.use('/afbeeldingen', afbeeldingRouter);
+app.use('/regios', regioRouter);
+app.use('/pandregios', pandregioRouter);
 
 app.all("*", (req, res) => {
     res.status(404).send("Page not found");

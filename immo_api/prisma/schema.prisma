@@ -59,4 +59,13 @@ model Pand {
   typePand            TypePand    @relation(fields: [typePandId], references: [id])
   typePandId          Int         @unique
   pandRegio           PandRegio?
+  afbeeldingen        Afbeelding[]
+}
+
+model Afbeelding {
+  id                  Int       @id @default(autoincrement())
+  url                 String
+  updatedAt           DateTime  @default(now())
+  pand                Pand      @relation(fields: [pandId], references: [id])
+  pandId              Int       
 }
