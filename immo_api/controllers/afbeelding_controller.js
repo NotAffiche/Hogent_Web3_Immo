@@ -6,9 +6,6 @@ const AfbeeldingController = {
     findAll: async (req, res) => {
         try {
             const result = await prisma.Afbeelding.findMany({   
-                include: {
-                    pand: true
-                }
             });
             res.status(200).json(result);
         }
@@ -23,9 +20,6 @@ const AfbeeldingController = {
             const result = await prisma.Afbeelding.findUnique({
                 where: {
                     id: parseInt(id),
-                },
-                include: {
-                    pand: true
                 }
             })
             res.status(200).json(result);

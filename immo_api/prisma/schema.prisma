@@ -24,7 +24,7 @@ model TypePand {
   naam                String    @unique
   updatedAt           DateTime  @default(now())
 
-  pand                Pand?
+  pand                Pand[]
 }
 
 model Regio {
@@ -50,6 +50,7 @@ model Pand {
   bus                 String?
   postCode            Int
   gemeente            String
+  prijs               Int
   aantalKamers        Int
   oppervlakte         Float
   beschrijving        String
@@ -57,7 +58,7 @@ model Pand {
   isVerkochtVerhuurd  Boolean
 
   typePand            TypePand    @relation(fields: [typePandId], references: [id])
-  typePandId          Int         @unique
+  typePandId          Int         
   pandRegio           PandRegio?
   afbeeldingen        Afbeelding[]
 }

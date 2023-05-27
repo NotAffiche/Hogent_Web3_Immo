@@ -6,7 +6,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 //components
 import RootLayout from './components/RootLayout';
-import PandenRootLayout from './components/PandenRootLayout';
 
 //pages
 import HomePage from './pages/HomePage';
@@ -15,7 +14,6 @@ import PagePanden from './pages/PagePanden';
 import PagePandDetail from './pages/PagePandDetail';
 import PagePandEdit from './pages/PagePandEdit';
 import PagePandCreate from './pages/PagePandCreate';
-import PageFavorieten from './pages/PageFavorieten';
 
 const router = createBrowserRouter([
   {
@@ -53,11 +51,6 @@ const router = createBrowserRouter([
             element: <PagePandCreate />,
           },
         ],
-      },
-      {
-        path: 'favorieten',
-        element: <PageFavorieten/>,
-        errorElement: <ErrorPage/>
       },
       {
         path: '*',

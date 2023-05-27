@@ -1,12 +1,9 @@
 import React from 'react';
-import NavigationComponent from '../components/NavigationComponent';
-//import { useRouteError } from 'react-router-dom';
 
 const ErrorPage = () => {
-  //const error = useRouteError();
   let title = 'Error';
-  let message = 'Something went wrong... o.O \n';// + error.toString();
-
+  let message = 'Something went wrong... o.O \n';
+  
   return (
     <>
     <h1>{title}</h1>

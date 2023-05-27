@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cors = require('cors');
 
 const indexRouter = require('./routes/index');
 
@@ -24,6 +25,13 @@ app.use((req, res, next) => {
     console.log(`Req to: ${req.url} w/ip: ${req.ip}`);
     next();
 });
+
+app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      optionsSuccessStatus: 200,
+    })
+  );
 
 app.use('/', indexRouter);
 app.use('/panden', pandenRouter);

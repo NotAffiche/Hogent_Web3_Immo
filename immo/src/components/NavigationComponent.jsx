@@ -16,11 +16,6 @@ const NavigationComponent = () => {
                         Panden
                     </NavLink>
                 </li>
-                <li>
-                    <NavLink to='favorieten' end>
-                        Favorieten
-                    </NavLink>
-                </li>
             </ul>
         </header>
         </>

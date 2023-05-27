@@ -39,69 +39,78 @@ const PandController = {
     },
     create: async (req, res) => {
         try {
-            const valResult = validationResult(req);
-
-            if (!valResult.errors.length) {
-                const result = req.body;
-                const tp = await prisma.Pand.create({
-                    data: {
-                        straat: result.straat,
-                        huisNr: result.huisNr,
-                        bus: result.bus,
-                        postCode: result.postCode,
-                        gemeente: result.gemeente,
-                        aantalKamers: result.aantalKamers,
-                        oppervlakte: result.oppervlakte,
-                        beschrijving: result.beschrijving,
-                        isVerkochtVerhuurd: result.isVerkochtVerhuurd,
-                        typePandId: result.typePandId
-                    }
-                });
-                res.status(200).json(tp);
-            } else {
-                res.status(500).json(valResult.errors);
+          const valResult = validationResult(req);
+      
+          if (!valResult.errors.length) {
+            const result = req.body;
+            const { typePandId, ...pandData } = result;
+      
+            const existingTypePand = await prisma.TypePand.findUnique({
+              where: {
+                id: typePandId,
+              },
+            });
+      
+            if (!existingTypePand) {
+              return res.status(404).json({ error: 'TypePand not found' });
             }
+      
+            const createdPand = await prisma.Pand.create({
+              data: {
+                ...pandData,
+                typePandId: typePandId,
+              },
+              include: {
+                typePand: true,
+                afbeeldingen: true,
+              },
+            });
+      
+            res.status(201).json(createdPand);
+          } else {
+            res.status(500).json(valResult.errors);
+          }
+        } catch (err) {
+          console.error(err);
+          res.status(500);
         }
-        catch (err) {
-            console.error(err);
-            res.status(500);
-        }
-    },
-    update: async (req, res) => {
+      },
+      update: async (req, res) => {
         try {
-            const valResult = validationResult(req);
-
-            if (!valResult.errors.length) {
-                const result = req.body;
-                //const { id } = req.params;
-                const tp = await prisma.Pand.update({
-                    where: {
-                        id: result.id,
-                      },
-                      data: {
-                        straat: result.straat,
-                        huisNr: result.huisNr,
-                        bus: result.bus,
-                        postCode: result.postCode,
-                        gemeente: result.gemeente,
-                        aantalKamers: result.aantalKamers,
-                        oppervlakte: result.oppervlakte,
-                        beschrijving: result.beschrijving,
-                        isVerkochtVerhuurd: result.isVerkochtVerhuurd,
-                        typePandId: result.typePandId,
-                        updatedAt: new Date()
-                      },
-                });
-                res.status(200).json(tp);
-            } else {
-                res.status(500).json(valResult.errors);
-            }
+          const valResult = validationResult(req);
+      
+          if (!valResult.errors.length) {
+            console.log(req.body);
+            const { id, straat, huisNr, bus, postCode, gemeente, aantalKamers, oppervlakte, beschrijving, isVerkochtVerhuurd, typePandId } = req.body;
+      
+            const tp = await prisma.Pand.update({
+              where: {
+                id: id,
+              },
+              data: {
+                straat,
+                huisNr,
+                bus,
+                postCode,
+                gemeente,
+                aantalKamers,
+                oppervlakte,
+                beschrijving,
+                isVerkochtVerhuurd,
+                typePandId,
+                updatedAt: new Date(),
+              },
+            });
+      
+            res.status(200).json(tp);
+          } else {
+            res.status(500).json(valResult.errors);
+          }
+        } catch (err) {
+          console.error(err);
+          res.status(500).json({ error: 'An error occurred while updating the pand.' });
         }
-        catch (err) {
-            console.error(err);
-            res.status(500);
-        }
-    },
+      },
     deleteById: async (req, res) => {
         const { id } = req.params;
         try {
