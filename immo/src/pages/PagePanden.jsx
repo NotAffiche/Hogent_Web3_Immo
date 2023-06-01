@@ -24,7 +24,7 @@ const PagePanden = () => {
 
   const truncateDescription = (description, maxLength) => {
     if (!description) {
-      return "No description available";
+      return "Geen beschrijving";
     }
     if (description.length > maxLength) {
       return `${description.slice(0, maxLength)}...`;

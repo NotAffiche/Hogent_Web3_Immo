@@ -38,7 +38,7 @@ const PagePandDetail = ({ match }) => {
               ))}
             </Carousel>
           ) : (
-            <img src={noImageAvailable} alt="No Image Available" className="h-60 object-cover rounded" />
+            <img src={noImageAvailable} alt="Not Available" className="h-60 object-cover rounded" />
           )}
           <div>
             <p><b>Adres: </b>{pand.straat} {pand.huisNr} {pand.bus || ''}</p>
