@@ -2,7 +2,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 //css
-//import './App.css';
+import 'tailwindcss/tailwind.css';
 
 //components
 import RootLayout from './components/RootLayout';

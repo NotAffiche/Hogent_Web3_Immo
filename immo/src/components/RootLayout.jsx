@@ -4,12 +4,12 @@ import Navigation from './NavigationComponent';
 
 const RootLayout = () => {
     return (
-        <>
+    <div>
     <Navigation />
-    <main>
+    <main className="container mx-auto py-4">
         <Outlet />
     </main>
-    </>
+    </div>
     );
 };
 
