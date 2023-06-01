@@ -81,7 +81,7 @@ const PandController = {
       
           if (!valResult.errors.length) {
             console.log(req.body);
-            const { id, straat, huisNr, bus, postCode, gemeente, aantalKamers, oppervlakte, beschrijving, isVerkochtVerhuurd, typePandId } = req.body;
+            const { id, straat, huisNr, bus, postCode, gemeente, prijs, aantalKamers, oppervlakte, beschrijving, isVerkochtVerhuurd, typePandId } = req.body;
       
             const tp = await prisma.Pand.update({
               where: {
@@ -93,6 +93,7 @@ const PandController = {
                 bus,
                 postCode,
                 gemeente,
+                prijs,
                 aantalKamers,
                 oppervlakte,
                 beschrijving,

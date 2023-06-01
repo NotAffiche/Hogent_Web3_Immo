@@ -30,6 +30,7 @@ router.put(
         body("huisNr").exists().withMessage("huisnr moet bestaan"),
         body("postCode").exists().withMessage("postcode moet bestaan").isLength({min:4, max:4}).withMessage("4 karakters"),
         body("gemeente").exists().withMessage("gem moet bestaan").isLength({min:3}).withMessage("Minstens 3 karakters"),
+        body("prijs").exists().withMessage("prijs moet bestaan"),
         body("aantalKamers").exists().withMessage("#kamers moet bestaan"),
         body("oppervlakte").exists().withMessage("opp moet bestaan"),
         body("beschrijving").exists().withMessage("besch moet bestaan").isLength({min:3}).withMessage("Minstens 3 karakters"),

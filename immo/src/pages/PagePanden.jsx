@@ -45,7 +45,7 @@ const PagePanden = () => {
               )}
               <div className="px-6 py-4">
                 <h2 className="text-lg font-bold mb-2">{pand.straat} {pand.huisNr}</h2>
-                <p className="mb-2">{truncateDescription(pand.beschrijving, 35)}</p>
+                <p className="mb-10">{truncateDescription(pand.beschrijving, 35)}</p>
               </div>
             </div>
             <span onClick={(e) => e.stopPropagation()} className="absolute bottom-4 left-0 right-0 flex justify-center">

@@ -42,6 +42,7 @@ const PagePandDetail = ({ match }) => {
           )}
           <div>
             <p><b>Adres: </b>{pand.straat} {pand.huisNr} {pand.bus || ''}</p>
+            <p><b>Type pand: </b>{pand.typePand.naam}</p>
             <p><b>Postcode/Gemeente: </b>{pand.postCode} {pand.gemeente}</p>
             <p><b>Prijs: </b>€{pand.prijs}</p>
             <p><b>Aantal kamers: </b>{pand.aantalKamers}</p>

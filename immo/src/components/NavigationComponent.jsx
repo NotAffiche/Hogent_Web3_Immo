@@ -18,7 +18,6 @@ const NavigationComponent = () => {
                 to="/"
                 end
                 className="text-white hover:text-gray-300 px-2 py-1 rounded-md"
-                activeClassName="bg-gray-700"
               >
                 Home
               </NavLink>
@@ -28,7 +27,6 @@ const NavigationComponent = () => {
                 to="/panden"
                 end
                 className="text-white hover:text-gray-300 px-2 py-1 rounded-md"
-                activeClassName="bg-gray-700"
               >
                 Panden
               </NavLink>
