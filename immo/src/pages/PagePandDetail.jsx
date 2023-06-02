@@ -25,7 +25,7 @@ const PagePandDetail = ({ match }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Pand</h1>
       {pand ? (
         <div>
