@@ -166,7 +166,7 @@ const PagePandEdit = () => {
         typePanden={typePanden}
         handleInputChange={handleInputChange} />
         <label className="block mb-2">Afbeeldingen</label>
-        {pand.afbeeldingen.map((image, index) => (
+        {pand.afbeeldingen.map((image) => (
           <div key={image.id} className="flex items-center mb-2">
             <input
               type="text"
