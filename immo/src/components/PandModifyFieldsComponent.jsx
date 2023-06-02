@@ -61,7 +61,7 @@ const PandModifyFieldsCompoent = ({pand, typePanden, handleInputChange}) => {
             />
             <label className="block mb-2">Oppervlakte</label>
             <input
-              type="text"
+              type="number"
               name="oppervlakte"
               value={pand.oppervlakte}
               onChange={handleInputChange}

@@ -85,7 +85,11 @@ const PagePandCreate = () => {
     if (type === 'checkbox') {
       inputValue = checked;
     } else if (name === 'oppervlakte') {
-      inputValue = parseFloat(value);
+      if (/^\d*\.?\d*$/.test(value) || value === '.') {
+        inputValue = value === '' ? '' : parseFloat(value);
+      } else {
+        return;
+      }
     } else if (name === 'typePandId' || name === 'huisNr' || name === 'postCode' || name === 'prijs' || name === 'aantalKamers') {
       inputValue = parseInt(value);
     }

@@ -44,7 +44,7 @@ const PagePandDetail = ({ match }) => {
             <p><b>Adres: </b>{pand.straat} {pand.huisNr} {pand.bus || ''}</p>
             <p><b>Type pand: </b>{pand.typePand.naam}</p>
             <p><b>Postcode/Gemeente: </b>{pand.postCode} {pand.gemeente}</p>
-            <p><b>Prijs: </b>€{pand.prijs}</p>
+            <p><b>Prijs: </b>€ {pand.prijs.toLocaleString("nl-BE", { minimumFractionDigits: 2 })}</p>
             <p><b>Aantal kamers: </b>{pand.aantalKamers}</p>
             <p><b>Oppervlakte: </b>{pand.oppervlakte}m²</p>
             <p><b>Beschrijving: </b>{pand.beschrijving}</p>
