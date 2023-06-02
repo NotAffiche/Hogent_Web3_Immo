@@ -234,7 +234,7 @@ const PagePanden = () => {
                 </div>
               </div>
               <span onClick={(e) => e.stopPropagation()} className="absolute bottom-4 left-0 right-0 flex justify-center">
-                <FavoriteButton className="mt-2" />
+                <FavoriteButton className="mt-2" id={pand.id} />
               </span>
             </div>
           </div>
