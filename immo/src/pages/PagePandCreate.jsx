@@ -53,6 +53,7 @@ const PagePandCreate = () => {
       }
     } catch (error) {
       console.error('Error creating pand:', error);
+      alert(`Error creating pand:\n${error}`);
     }
   };
 
