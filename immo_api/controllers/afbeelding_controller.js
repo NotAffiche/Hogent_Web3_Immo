@@ -31,6 +31,7 @@ const AfbeeldingController = {
     },
     create: async (req, res) => {
         try {
+            console.log(req.body);
             const valResult = validationResult(req);
 
             if (!valResult.errors.length) {

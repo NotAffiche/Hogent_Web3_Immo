@@ -3,45 +3,47 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const PagePandEdit = () => {
-    const navigate = useNavigate();
-    const [pand, setPand] = useState(null);
-    const [typePanden, setTypePanden] = useState([]);
-    const { id } = useParams();
+  const navigate = useNavigate();
+  const [pand, setPand] = useState(null);
+  const [typePanden, setTypePanden] = useState([]);
+  const [afbeelding, setAfbeelding] = useState([]);
+  const { id } = useParams();
 
-    useEffect(() => {
-        fetchPand();
-      }, []);
-    
-      const fetchPand = async () => {
-        try {
-          const response = await fetch(`http://localhost:5000/panden/${id}`);
-          const data = await response.json();
-          setPand(data);
-        } catch (error) {
-          console.error('Error fetching pand:', error);
-        }
-      };
+  useEffect(() => {
+    fetchPand();
+  }, []);
 
-      useEffect(() => {
-        fetchTypePanden();
-      }, []);
+  const fetchPand = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/panden/${id}`);
+      const data = await response.json();
+      setPand(data);
+      const updatedImages = data.afbeeldingen.map((image) => ({ ...image, saved: true }));
+      setPand((prevPand) => ({ ...prevPand, afbeeldingen: updatedImages }));
+      setAfbeelding({ url: '', pandId: id });
+    } catch (error) {
+      console.error('Error fetching pand:', error);
+    }
+  };
 
-      const fetchTypePanden = async () => {
-        try {
-          const response = await fetch('http://localhost:5000/typepanden');
-          const data = await response.json();
-          setTypePanden(data);
-        } catch (error) {
-          console.error('Error fetching typePanden:', error);
-        }
-      };
+  useEffect(() => {
+    fetchTypePanden();
+  }, []);
+
+  const fetchTypePanden = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/typepanden');
+      const data = await response.json();
+      setTypePanden(data);
+    } catch (error) {
+      console.error('Error fetching typePanden:', error);
+    }
+  };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
       handleInputChange(event);
-      console.log("prijs");
-      console.log(pand.prijs);
       const response = await fetch('http://localhost:5000/panden', {
         method: 'PUT',
         headers: {
@@ -79,7 +81,58 @@ const PagePandEdit = () => {
       console.error('Error deleting pand:', error);
     }
   };
-  
+
+  //afbeelding POST
+  const handleImagePost = async () => {
+    try {
+      console.log(afbeelding);
+      const response = await fetch(`http://localhost:5000/afbeeldingen/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(afbeelding),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Afbeelding added');
+        setPand((prevPand) => ({
+          ...prevPand,
+          afbeeldingen: [...prevPand.afbeeldingen, data],
+        }));
+        setAfbeelding({ url: '', pandId: id });
+      } else {
+        const errorMessages = data.map((error) => error.msg).join('\n');
+        alert(`Error adding afbeelding:\n${errorMessages}`);
+      }
+    } catch (error) {
+      console.error('Error adding afbeelding:', error);
+    }
+  };
+
+  //afbeelding DELETE
+  const handleImageDelete = async (imgId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/afbeeldingen/${imgId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        console.log('Afbeelding deleted');
+        setPand((prevPand) => ({
+          ...prevPand,
+          afbeeldingen: prevPand.afbeeldingen.filter((afbeelding) => afbeelding.id !== imgId),
+        }));
+      } else {
+        const data = await response.json();
+        const errorMessages = data.map((error) => error.msg).join('\n');
+        alert(`Error deleting afbeelding:\n${errorMessages}`);
+      }
+    } catch (error) {
+      console.error('Error deleting afbeelding:', error);
+    }
+  };
+
+  //INPUT CHANGE
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -91,12 +144,14 @@ const PagePandEdit = () => {
       inputValue = parseFloat(value);
     } else if (name === 'typePandId' || name === 'huisNr' || name === 'postCode' || name === 'prijs' || name === 'aantalKamers') {
       inputValue = parseInt(value);
-    }
-    else {
+    } else {
       inputValue = value;
     }
-
     setPand((prevPand) => ({ ...prevPand, [name]: inputValue }));
+    if (name === 'url') {
+      console.log(`url: ${inputValue}; pandId: ${pand.id}`);
+      setAfbeelding({ url: inputValue, pandId: pand.id });
+    }
   };
 
   if (pand === null) {
@@ -201,6 +256,40 @@ const PagePandEdit = () => {
             </option>
           ))}
         </select>
+        <label className="block mb-2">Afbeeldingen</label>
+        {pand.afbeeldingen.map((image, index) => (
+          <div key={image.id} className="flex items-center mb-2">
+            <input
+              type="text"
+              value={image.url}
+              disabled={true}
+              className="w-full border border-gray-300 px-2 py-1 rounded"
+            />
+            <button
+              type="button"
+              onClick={() => handleImageDelete(image.id)}
+              className="bg-red-500 text-white px-2 py-1 ml-2 rounded"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <div className="flex items-center mb-2">
+          <input
+            type="text"
+            name="url"
+            value={afbeelding.url}
+            onChange={handleInputChange}
+            className="w-full border border-gray-300 px-2 py-1 rounded"
+          />
+          <button
+            type="button"
+            onClick={handleImagePost}
+            className="bg-green-500 text-white px-2 py-1 ml-2 rounded"
+          >
+            Add
+          </button>
+        </div>
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
