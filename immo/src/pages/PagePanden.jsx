@@ -17,6 +17,7 @@ const PagePanden = () => {
     minOppervlakte: '',
     maxOppervlakte: '',
     isVerkochtVerhuurd: '',
+    showFavoritesOnly: false,
   });
 
   useEffect(() => {
@@ -60,6 +61,7 @@ const PagePanden = () => {
       minOppervlakte,
       maxOppervlakte,
       isVerkochtVerhuurd,
+      showFavoritesOnly
     } = filters;
 
     if (postCode && parseInt(pand.postCode) !== parseInt(postCode)) {
@@ -95,6 +97,10 @@ const PagePanden = () => {
     }
 
     if (isVerkochtVerhuurd && pand.isVerkochtVerhuurd !== isVerkochtVerhuurd) {
+      return false;
+    }
+
+    if (showFavoritesOnly && (localStorage.getItem(`isLiked_${pand.id}`) !== 'true')) {
       return false;
     }
 
@@ -204,6 +210,16 @@ const PagePanden = () => {
             className="mr-2"
           />
           <label htmlFor="isVerkochtVerhuurd" className="text-sm text-gray-700">Is Verkocht/Verhuurd</label>
+        </div>
+        <div className="mt-4">
+          <input
+            type="checkbox"
+            name="showFavoritesOnly"
+            checked={filters.showFavoritesOnly}
+            onChange={handleInputChange}
+            className="mr-2"
+          />
+          <label htmlFor="showFavoritesOnly" className="text-sm text-gray-700">Toon Enkel Favorieten</label>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
