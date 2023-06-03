@@ -1,22 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
 const favoritesSlice = createSlice({
-  initialState: [],
-  name: 'favorites',
-  reducers: {
-    add: (state, action) => {
-      const foundIndex = state.findIndex((statePand) => statePand.id === action.payload.id);
-      if (foundIndex === -1) {
-        return [...state, action.payload];
-      }
-      return state;
-    },
-    remove: (state, action) => {
-      const filteredState = state.filter((statePand) => statePand.id !== action.payload);
-      return filteredState;
+    initialState:[],
+    name:'favorites',
+    reducers: {
+        add:(state,action)=>{
+
+            const foundIndex = state.findIndex((stateRecipe)=> stateRecipe.id === action.payload.id);
+            
+            if (foundIndex === -1) {
+                state.push(action.payload); // Mutable
+            }
+
+            // Immutable
+            // return [...state,action.payload]
+        },
+        remove:(state,action)=>{
+            const newArr = state.filter((stateRecipe)=> stateRecipe.id !== action.payload);
+            return newArr;
+        },
+        clear:(state,action) =>{
+            return [];
+        }
     }
-  }
 });
 
-export const { reducer, actions } = favoritesSlice;
-export const { add, remove } = actions;
+export const { reducer } = favoritesSlice;
+export const { add , remove } = favoritesSlice.actions;
