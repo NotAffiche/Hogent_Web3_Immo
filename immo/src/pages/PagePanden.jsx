@@ -9,7 +9,7 @@ import { add, remove } from '../store/favorites/slice';
 const PagePanden = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [pands, setPanden] = useState([]);
+  const [panden, setPanden] = useState([]);
   const [filters, setFilters] = useState({
     postCode: '',
     gemeente: '',
@@ -53,7 +53,7 @@ const PagePanden = () => {
     return description;
   };
 
-  const filteredPands = pands.filter((pand) => {
+  const filteredPands = panden.filter((pand) => {
     const {
       postCode,
       gemeente,
@@ -109,6 +109,10 @@ const PagePanden = () => {
 
     return true;
   });
+
+  if (panden === null) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>

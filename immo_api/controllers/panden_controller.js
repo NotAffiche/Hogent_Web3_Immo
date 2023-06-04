@@ -8,7 +8,12 @@ const PandController = {
             const result = await prisma.Pand.findMany({   
                 include: {
                     typePand: true,
-                    afbeeldingen: true
+                    afbeeldingen: true,
+                    pandRegios: {
+                      include: {
+                        regio: true
+                      }
+                    }
                 }
             });
             res.status(200).json(result);
@@ -27,7 +32,12 @@ const PandController = {
                 },
                 include: {
                     typePand: true,
-                    afbeeldingen: true
+                    afbeeldingen: true,
+                    pandRegios: {
+                      include: {
+                        regio: true
+                      }
+                    }
                 }
             })
             res.status(200).json(result);

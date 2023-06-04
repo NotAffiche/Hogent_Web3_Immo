@@ -1,6 +1,6 @@
 import React from "react";
 
-const PandModifyFieldsCompoent = ({pand, typePanden, handleInputChange}) => {
+const PandModifyFieldsCompoent = ({pand, typePanden, regios, handleInputChange}) => {
     return (
         <div>
             <label className="block mb-2">Straat</label>

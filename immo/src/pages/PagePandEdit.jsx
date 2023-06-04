@@ -8,27 +8,31 @@ const PagePandEdit = () => {
   const navigate = useNavigate();
   const [pand, setPand] = useState(null);
   const [typePanden, setTypePanden] = useState([]);
+  const [regios, setRegios] = useState([]);
+  const [previouslySavedRegios, setPreviouslySavedRegios] = useState([]);
   const [afbeelding, setAfbeelding] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
     fetchPand();
     fetchTypePanden();
+    fetchRegios();
   }, []);
 
   const fetchPand = async () => {
     try {
       const response = await fetch(`http://localhost:5000/panden/${id}`);
       const data = await response.json();
-      setPand(data);
+      const { pandRegios, ...pandData } = data;
+      setPand((prevPand) => ({ ...prevPand, ...pandData }));
       const updatedImages = data.afbeeldingen.map((image) => ({ ...image, saved: true }));
-      setPand((prevPand) => ({ ...prevPand, afbeeldingen: updatedImages }));
+      setPreviouslySavedRegios(pandRegios);
+      setPand((prevPand) => ({ ...prevPand, afbeeldingen: updatedImages, pandRegios: pandRegios }));
       setAfbeelding({ url: '', pandId: id });
     } catch (error) {
       console.error('Error fetching pand:', error);
     }
   };
-
   const fetchTypePanden = async () => {
     try {
       const response = await fetch('http://localhost:5000/typepanden');
@@ -36,6 +40,15 @@ const PagePandEdit = () => {
       setTypePanden(data);
     } catch (error) {
       console.error('Error fetching typePanden:', error);
+    }
+  };
+  const fetchRegios = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/regios');
+      const data = await response.json();
+      setRegios(data);
+    } catch (error) {
+      console.error('Error fetching regios:', error);
     }
   };
 
@@ -63,6 +76,7 @@ const PagePandEdit = () => {
     }
   };
 
+  //pand DELETE
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:5000/panden/${id}`, {
@@ -84,7 +98,6 @@ const PagePandEdit = () => {
   //afbeelding POST
   const handleImagePost = async () => {
     try {
-      console.log(afbeelding);
       const response = await fetch(`http://localhost:5000/afbeeldingen/`, {
         method: 'POST',
         headers: {
@@ -109,6 +122,41 @@ const PagePandEdit = () => {
     }
   };
 
+  //pandRegio POST
+  /*
+  const handlePandRegioPost = async (pandId, regioId) => {
+    try {
+      const requestBody = {
+        regioId: regioId,
+        pandId: pandId,
+      };
+      const response = await fetch(`http://localhost:5000/pandregios/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log('PandRegio added');
+        setPand((prevPand) => ({
+          ...prevPand,
+          pandRegios: [...prevPand.pandRegios, data],
+        }));
+        setPreviouslySavedRegios((prevRegios) => [...prevRegios, data]);
+      } else {
+        const errorMessages = data.map((error) => error.msg).join('\n');
+        alert(`Error adding pandregio:\n${errorMessages}`);
+      }
+    } catch (error) {
+      console.error('Error adding pandregio:', error);
+    }
+  };
+  */
+
+
+
   //afbeelding DELETE
   const handleImageDelete = async (imgId) => {
     try {
@@ -131,6 +179,29 @@ const PagePandEdit = () => {
     }
   };
 
+  //pandRegio DELETE
+  const handlePandRegioDelete = async (pandRegioId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/pandregios/${pandRegioId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        console.log('Pandregio deleted');
+        setPand((prevPand) => ({
+          ...prevPand,
+          pandRegios: prevPand.pandRegios.filter((pandRegio) => pandRegio.id !== pandRegioId),
+        }));
+        setPreviouslySavedRegios((prevRegios) =>
+          prevRegios.filter((regio) => regio.id !== pandRegioId)
+        );
+      } else {
+        console.error('Error deleting pandregio:', response.status);
+      }
+    } catch (error) {
+      console.error('Error deleting pandregio:', error);
+    }
+  };
+
   //INPUT CHANGE
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -147,7 +218,15 @@ const PagePandEdit = () => {
       }
     } else if (name === 'typePandId' || name === 'huisNr' || name === 'postCode' || name === 'prijs' || name === 'aantalKamers') {
       inputValue = parseInt(value);
-    } else {
+    }
+    else if (name === 'regioId') {
+      const options = event.target.options;
+      inputValue = Array.from(options)
+        .filter((option) => option.selected)
+        .map((option) => option.value);
+      //handlePandRegioPost(pand.id, parseInt(inputValue));
+    }
+    else {
       inputValue = value;
     }
     setPand((prevPand) => ({ ...prevPand, [name]: inputValue }));
@@ -165,10 +244,11 @@ const PagePandEdit = () => {
     <div className="max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">Wijzig Pand</h1>
       <form onSubmit={handleFormSubmit}>
-        <PandModifyFieldsComponent  
-        pand={pand}
-        typePanden={typePanden}
-        handleInputChange={handleInputChange} />
+        <PandModifyFieldsComponent
+          pand={pand}
+          typePanden={typePanden}
+          regios={regios}
+          handleInputChange={handleInputChange} />
         <label className="block mb-2">Afbeeldingen</label>
         {pand.afbeeldingen.map((image) => (
           <div key={image.id} className="flex items-center mb-2">
@@ -202,6 +282,43 @@ const PagePandEdit = () => {
           >
             Add
           </button>
+        </div>
+        <div className="block mb-2">
+          <label className="block mb-2">Regio</label>
+          {/*
+          <select
+            name="regioId"
+            onChange={handleInputChange}
+            className="w-full border border-gray-300 px-2 py-1 rounded mb-4">
+            <option value="" disabled selected>Select Regio</option>
+            {regios.map((regio) => (
+              <option key={regio.id} value={regio.id}>
+                {regio.naam}
+              </option>
+            ))}
+          </select>
+          */} 
+          <div>
+            {previouslySavedRegios.map((pandRegio) => (
+              <div key={pandRegio.id} className="flex items-center mb-2">
+                <input
+                  type="text"
+                  value={pandRegio.regio.naam}
+                  disabled={true}
+                  className="w-full border border-gray-300 px-2 py-1 rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    handlePandRegioDelete(pandRegio.id);
+                  }}
+                  className="bg-red-500 text-white px-2 py-1 ml-2 rounded"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
         <button
           type="submit"

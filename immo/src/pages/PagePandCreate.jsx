@@ -6,6 +6,7 @@ import PandModifyFieldsComponent from '../components/PandModifyFieldsComponent';
 const PagePandCreate = () => {
   const navigate = useNavigate();
   const [typePanden, setTypePanden] = useState([]);
+  const [regios, setRegios] = useState([]);
   const [pand, setPand] = useState({
     straat: '',
     huisNr: 1,
@@ -23,6 +24,7 @@ const PagePandCreate = () => {
 
   useEffect(() => {
     fetchTypePanden();
+    fetchRegios();
   }, []);
 
   const fetchTypePanden = async () => {
@@ -35,21 +37,55 @@ const PagePandCreate = () => {
     }
   };
 
+  const fetchRegios = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/regios');
+      const data = await response.json();
+      setRegios(data);
+    } catch (error) {
+      console.error('Error fetching regios:', error);
+    }
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
       handleInputChange(event);
+      const { regioId, ...pandData } = pand;
+  
+      // Send the modified pandData in the request body
       const response = await fetch('http://localhost:5000/panden', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(pand),
+        body: JSON.stringify(pandData),
       });
       const data = await response.json();
       if (response.ok) {
         console.log('Pand created:', data);
-        //
+  
+        // Create PandRegio records
+        let selectedRegioIds = regioId;
+        if (!Array.isArray(selectedRegioIds)) {
+          selectedRegioIds = [selectedRegioIds];
+        }
+        const selectedRegiosIdsIntArr = selectedRegioIds.map((str) => parseInt(str));
+        await Promise.allSettled(
+          selectedRegiosIdsIntArr.map(async (regioId) => {
+            const response = await fetch('http://localhost:5000/pandregios', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ regioId, pandId: data.id }),
+            });
+            const pandRegioData = await response.json();
+            console.log('PandRegio created:', pandRegioData);
+          })
+        );
+  
+        // Create Afbeelding records
         const nonEmptyUrls = urls.filter((url) => url !== '');
         await Promise.all(
           nonEmptyUrls.map(async (url) => {
@@ -64,7 +100,7 @@ const PagePandCreate = () => {
             console.log('Image created:', imageData);
           })
         );
-        //
+  
         navigate(`/panden`);
       } else {
         const errorMessages = data.map((error) => error.msg).join('\n');
@@ -75,6 +111,7 @@ const PagePandCreate = () => {
       alert(`Error creating pand:\n${error}`);
     }
   };
+
 
 
   const handleInputChange = (event) => {
@@ -93,6 +130,13 @@ const PagePandCreate = () => {
     } else if (name === 'typePandId' || name === 'huisNr' || name === 'postCode' || name === 'prijs' || name === 'aantalKamers') {
       inputValue = parseInt(value);
     }
+    else if (name === 'regioId') {
+      const options = event.target.options;
+      inputValue = Array.from(options)
+        .filter((option) => option.selected)
+        .map((option) => option.value);
+        console.log(inputValue);
+    }
     else {
       inputValue = value;
     }
@@ -102,22 +146,22 @@ const PagePandCreate = () => {
 
   const handleInputChangeURL = (event, index) => {
     const { value } = event.target;
-  
+
     setUrls((prevUrls) => {
       const updatedUrls = [...prevUrls];
       updatedUrls[index] = value;
-      
+
       // remove if null
       if (value === '' && updatedUrls.length > 1) {
         updatedUrls.splice(index, 1);
       }
-      
+
       // new empty input
       const lastValue = updatedUrls[updatedUrls.length - 1];
       if (lastValue !== '') {
         updatedUrls.push('');
       }
-  
+
       return updatedUrls;
     });
   };
@@ -129,9 +173,11 @@ const PagePandCreate = () => {
         <PandModifyFieldsComponent
           pand={pand}
           typePanden={typePanden}
+          regios={regios}
           handleInputChange={handleInputChange}
         />
         <div className="mb-2">
+          <label className="block mb-2">Afbeeldingen</label>
           {urls.map((url, index) => (
             <div key={index} className="mb-2">
               <input
@@ -143,6 +189,19 @@ const PagePandCreate = () => {
               />
             </div>
           ))}
+          <label className="block mb-2">Regio</label>
+            <select
+              name="regioId"
+              onChange={handleInputChange}
+              multiple
+              className="w-full border border-gray-300 px-2 py-1 rounded mb-4"
+            >
+              {regios.map((regio) => (
+                <option key={regio.id} value={regio.id}>
+                  {regio.naam}
+                </option>
+              ))}
+            </select>
         </div>
         <button
           type="submit"

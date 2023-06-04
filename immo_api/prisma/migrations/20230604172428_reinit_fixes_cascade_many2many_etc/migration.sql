@@ -37,8 +37,7 @@ CREATE TABLE `PandRegio` (
     `regioId` INTEGER NOT NULL,
     `pandId` INTEGER NOT NULL,
 
-    UNIQUE INDEX `PandRegio_regioId_key`(`regioId`),
-    UNIQUE INDEX `PandRegio_pandId_key`(`pandId`),
+    UNIQUE INDEX `PandRegio_regioId_pandId_key`(`regioId`, `pandId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -53,7 +52,7 @@ CREATE TABLE `Pand` (
     `prijs` INTEGER NOT NULL,
     `aantalKamers` INTEGER NOT NULL,
     `oppervlakte` DOUBLE NOT NULL,
-    `beschrijving` VARCHAR(191) NOT NULL,
+    `beschrijving` VARCHAR(1000) NOT NULL,
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `isVerkochtVerhuurd` BOOLEAN NOT NULL,
     `typePandId` INTEGER NOT NULL,
@@ -72,10 +71,10 @@ CREATE TABLE `Afbeelding` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `PandRegio` ADD CONSTRAINT `PandRegio_regioId_fkey` FOREIGN KEY (`regioId`) REFERENCES `Regio`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `PandRegio` ADD CONSTRAINT `PandRegio_regioId_fkey` FOREIGN KEY (`regioId`) REFERENCES `Regio`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PandRegio` ADD CONSTRAINT `PandRegio_pandId_fkey` FOREIGN KEY (`pandId`) REFERENCES `Pand`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `PandRegio` ADD CONSTRAINT `PandRegio_pandId_fkey` FOREIGN KEY (`pandId`) REFERENCES `Pand`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Pand` ADD CONSTRAINT `Pand_typePandId_fkey` FOREIGN KEY (`typePandId`) REFERENCES `TypePand`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
