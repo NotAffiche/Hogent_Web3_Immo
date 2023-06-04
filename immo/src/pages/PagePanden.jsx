@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import FavoriteButton from '../components/FavoriteButtonComponent';
 
 import noImageAvailable from '../assets/images/no_img.jpg';
+import { useDispatch } from 'react-redux';
+import { add, remove } from '../store/favorites/slice';
 
 const PagePanden = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [pands, setPanden] = useState([]);
   const [filters, setFilters] = useState({
@@ -250,7 +253,15 @@ const PagePanden = () => {
                 </div>
               </div>
               <span onClick={(e) => e.stopPropagation()} className="absolute bottom-4 left-0 right-0 flex justify-center">
-                <FavoriteButton className="mt-2" id={pand.id} />
+                <FavoriteButton className="mt-2" id={pand.id} 
+                onClick={() => {
+                  if (localStorage.getItem('isLiked_'+pand.id) === 'false') {
+                    dispatch(add(pand.id));
+                  }else{
+                    dispatch(remove(pand.id));
+                  }
+                }}
+                />
               </span>
             </div>
           </div>
