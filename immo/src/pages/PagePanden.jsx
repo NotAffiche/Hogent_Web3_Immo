@@ -10,6 +10,13 @@ const PagePanden = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [panden, setPanden] = useState([]);
+
+  const [filterTypePanden, setFilterTypePanden] = useState([]);
+  const [filterRegios, setFilterRegios] = useState([]);
+
+  const [activeFilterTypePanden, setActiveFilterTypePanden] = useState([]);
+  const [activeFilterRegios, setActiveFilterRegios] = useState([]);
+
   const [filters, setFilters] = useState({
     postCode: '',
     gemeente: '',
@@ -25,6 +32,8 @@ const PagePanden = () => {
 
   useEffect(() => {
     fetchPanden();
+    fetchTypePanden();
+    fetchRegios();
   }, [filters]);
 
   const fetchPanden = async () => {
@@ -34,6 +43,26 @@ const PagePanden = () => {
       setPanden(data);
     } catch (error) {
       console.error('Error fetching pands:', error);
+    }
+  };
+
+  const fetchTypePanden = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/typepanden`);
+      const data = await response.json();
+      setFilterTypePanden(data);
+    } catch (error) {
+      console.error('Error fetching typePanden:', error);
+    }
+  };
+
+  const fetchRegios = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/regios`);
+      const data = await response.json();
+      setFilterRegios(data);
+    } catch (error) {
+      console.error('Error fetching pandRegios:', error);
     }
   };
 
@@ -107,6 +136,22 @@ const PagePanden = () => {
       return false;
     }
 
+    if (activeFilterTypePanden.length > 0) {
+      if (!activeFilterTypePanden.includes(pand.typePandId)) {
+        return false;
+      }
+    }
+
+    if (activeFilterRegios.length > 0) {
+      const regioMatches = pand.pandRegios.some((regio) =>
+        activeFilterRegios.includes(regio.regioId)
+      );
+  
+      if (!regioMatches) {
+        return false;
+      }
+    }
+
     return true;
   });
 
@@ -118,7 +163,7 @@ const PagePanden = () => {
     <div>
       <div className="filter-section bg-gray-100 p-4 mb-4 rounded">
         <h2 className="text-lg font-bold mb-2">Filters</h2>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2 mb-2">
           <div>
             <label htmlFor="postCode" className="block text-sm font-medium text-gray-700 mb-1">Postcode</label>
             <input
@@ -208,26 +253,86 @@ const PagePanden = () => {
             />
           </div>
         </div>
-        <div className="mt-4">
-          <input
-            type="checkbox"
-            name="isVerkochtVerhuurd"
-            checked={filters.isVerkochtVerhuurd}
-            onChange={handleInputChange}
-            className="mr-2"
-          />
-          <label htmlFor="isVerkochtVerhuurd" className="text-sm text-gray-700">Is Verkocht/Verhuurd</label>
+        <div className="flex flex-wrap items-center">
+          <div className="mr-20 ">
+            <div className="mt-4 flex items-center">
+              <input
+                type="checkbox"
+                name="isVerkochtVerhuurd"
+                checked={filters.isVerkochtVerhuurd}
+                onChange={handleInputChange}
+                className="mr-2"
+              />
+              <label htmlFor="isVerkochtVerhuurd" className="text-sm text-gray-700">Is Verkocht/Verhuurd</label>
+            </div>
+            <div className="mt-4 flex items-center">
+              <input
+                type="checkbox"
+                name="showFavoritesOnly"
+                checked={filters.showFavoritesOnly}
+                onChange={handleInputChange}
+                className="mr-2"
+              />
+              <label htmlFor="showFavoritesOnly" className="text-sm text-gray-700">Toon Enkel Favorieten</label>
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <div className="mr-20 rounded border p-2">
+              <label htmlFor="typePand" className="block text-sm font-medium text-gray-700 mb-1">Type Pand</label>
+              {filterTypePanden.map((typePand) => (
+                <div key={typePand.id} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={typePand.id}
+                    value={typePand.id}
+                    checked={activeFilterTypePanden.includes(typePand.id)}
+                    onChange={(e) => {
+                      const isChecked = e.target.checked;
+                      setActiveFilterTypePanden((prevAFTP) => {
+                        if (isChecked) {
+                          return [...prevAFTP, typePand.id];
+                        } else {
+                          return prevAFTP.filter((id) => id !== typePand.id);
+                        }
+                      });
+                    }}
+                  />
+                  <label htmlFor={typePand.id} className="ml-1">{typePand.naam}</label>
+                </div>
+              ))}
+            </div>
+
+            <div className="mr-2 rounded border p-2">
+              <label htmlFor="regio" className="block text-sm font-medium text-gray-700 mb-1">Pand Regio</label>
+              <div className="grid grid-cols-3 gap-2">
+                {filterRegios.map((regio) => (
+                  <div key={regio.id} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={regio.id}
+                      value={regio.id}
+                      checked={activeFilterRegios.includes(regio.id)}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setActiveFilterRegios((prevFR) => {
+                          if (isChecked) {
+                            return [...prevFR, regio.id];
+                          } else {
+                            return prevFR.filter((id) => id !== regio.id);
+                          }
+                        });
+                      }}
+                    />
+                    <label htmlFor={regio.id} className="ml-1">{regio.naam}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div className="mt-4">
-          <input
-            type="checkbox"
-            name="showFavoritesOnly"
-            checked={filters.showFavoritesOnly}
-            onChange={handleInputChange}
-            className="mr-2"
-          />
-          <label htmlFor="showFavoritesOnly" className="text-sm text-gray-700">Toon Enkel Favorieten</label>
-        </div>
+
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {filteredPands.map((pand) => (
@@ -257,14 +362,14 @@ const PagePanden = () => {
                 </div>
               </div>
               <span onClick={(e) => e.stopPropagation()} className="absolute bottom-4 left-0 right-0 flex justify-center">
-                <FavoriteButton className="mt-2" id={pand.id} 
-                onClick={() => {
-                  if (localStorage.getItem('isLiked_'+pand.id) === 'false') {
-                    dispatch(add(pand.id));
-                  }else{
-                    dispatch(remove(pand.id));
-                  }
-                }}
+                <FavoriteButton className="mt-2" id={pand.id}
+                  onClick={() => {
+                    if (localStorage.getItem('isLiked_' + pand.id) === 'false') {
+                      dispatch(add(pand.id));
+                    } else {
+                      dispatch(remove(pand.id));
+                    }
+                  }}
                 />
               </span>
             </div>
